@@ -598,6 +598,9 @@ const recentPosts = await safeFetch(
       return;
     }
 
+    // Verify FormData capture
+    console.log("📦 Form Payload:", Object.fromEntries(formData));
+
     try {
       const res = await client.api.posts.$post({
         form: {
@@ -611,7 +614,7 @@ const recentPosts = await safeFetch(
       });
 
       if (res.ok) {
-        // Show Success Modal
+        // ... (success logic remains the same)
         const modal = document.getElementById("success-modal");
         const verifyBtn = document.getElementById(
           "verify-signal-btn",
@@ -619,32 +622,31 @@ const recentPosts = await safeFetch(
         const returnBtn = document.getElementById("return-uplink-btn");
         const slug = formData.get("slug") as string;
 
-        // Setup Modal content
         verifyBtn.href = `/blog/${slug}`;
 
-        // Show Modal with Animation
         modal?.classList.remove("hidden", "pointer-events-none");
-        // Force Reflow
         void modal?.offsetWidth;
         modal?.classList.remove("opacity-0");
         modal?.querySelector(".glass-panel")?.classList.remove("scale-95");
         modal?.querySelector(".glass-panel")?.classList.add("scale-100");
 
-        // Reset Form Logic
         form.reset();
         document.getElementById("delete-current-btn")?.classList.add("hidden");
         document.querySelector('button[type="submit"]')!.innerHTML =
           "BROADCAST SIGNAL";
 
-        // Return Logic
         returnBtn?.addEventListener("click", () => {
           modal?.classList.add("opacity-0", "pointer-events-none");
           modal?.querySelector(".glass-panel")?.classList.add("scale-95");
           setTimeout(() => modal?.classList.add("hidden"), 300);
-          window.location.reload(); // Refresh list
+          window.location.reload();
         });
       } else {
-        status!.innerText = "Transmission Failed.";
+        const errorData = await res
+          .json()
+          .catch(() => ({ error: res.statusText }));
+        console.error("Transmission Error:", errorData);
+        status!.innerText = `Transmission Failed: ${errorData.error || "Unknown Error"} (${res.status})`;
         status!.classList.remove("hidden");
         status!.classList.add("bg-red-500/20", "text-red-200");
       }
