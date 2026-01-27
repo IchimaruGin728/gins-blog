@@ -11,7 +11,10 @@ const isActive = (path: string) => {
 ---
 
 <!-- Mobile Bottom Navigation (Only visible on mobile) -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
+<nav
+  class="md:hidden fixed bottom-0 left-0 right-0 z-50"
+  style="padding-bottom: max(1rem, env(safe-area-inset-bottom)); padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right));"
+>
   <div
     class="mx-4 mb-4 glass-panel rounded-2xl px-6 py-3 border border-white/10 backdrop-blur-xl shadow-2xl"
   >

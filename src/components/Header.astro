@@ -1,11 +1,14 @@
-<nav class="fixed top-0 w-full z-50 px-6 py-4">
+<nav
+  class="fixed top-0 w-full z-50 px-6 py-4"
+  style="padding-top: max(1rem, env(safe-area-inset-top)); padding-left: max(1.5rem, env(safe-area-inset-left)); padding-right: max(1.5rem, env(safe-area-inset-right));"
+>
   <div
     class="max-w-7xl mx-auto glass-panel rounded-full px-6 py-3 flex justify-between items-center"
   >
     <!-- Left: Logo -->
     <a
       href="/"
-      class="text-base md:text-xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-brand-primary z-50 relative"
+      class="text-xl md:text-xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-accent to-brand-primary z-50 relative"
     >
       Gin's Blog
     </a>
@@ -123,7 +126,7 @@
         ) : (
           <a
             href="/login"
-            class="px-3 md:px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 text-xs font-bold tracking-wide transition-all border border-white/10 hover:border-white/20 hover:scale-105 active:scale-95"
+            class="px-4 md:px-5 py-2.5 md:py-2 rounded-full bg-white/5 hover:bg-white/10 text-xs md:text-xs font-bold tracking-wide transition-all border border-white/10 hover:border-white/20 hover:scale-105 active:scale-95"
           >
             LOGIN
           </a>
