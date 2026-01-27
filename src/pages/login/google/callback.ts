@@ -64,12 +64,12 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 				throw new Error("This Google account is already linked to another user account.");
 			}
 			
-			// Update current user with Google ID
+			// Update current user with Google ID and provider info
 			await db.update(users)
 				.set({ 
 					googleId: googleUser.sub,
-					username: googleUser.name,
-					avatar: googleUser.picture,
+					googleUsername: googleUser.name,
+					googleAvatar: googleUser.picture,
 				})
 				.where(eq(users.id, currentUserId));
 			
@@ -87,6 +87,8 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 				googleId: googleUser.sub,
 				username: googleUser.name,
 				avatar: googleUser.picture,
+				googleUsername: googleUser.name,
+				googleAvatar: googleUser.picture,
 			});
 			console.log("Created new user with Google:", userId);
 		}

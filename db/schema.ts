@@ -9,6 +9,14 @@ export const users = sqliteTable('users', {
   avatar: text('avatar'), // URL to R2 or external
   bio: text('bio'),
   socialLinks: text('social_links', { mode: 'json' }), // JSON string for { twitter, github, etc }
+  
+  // Provider-specific info (stored when linking accounts)
+  githubUsername: text('github_username'),
+  githubAvatar: text('github_avatar'),
+  googleUsername: text('google_username'),
+  googleAvatar: text('google_avatar'),
+  discordUsername: text('discord_username'),
+  discordAvatar: text('discord_avatar'),
 });
 
 export const sessions = sqliteTable('sessions', {

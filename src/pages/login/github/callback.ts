@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
             }
             
             githubUser = await githubUserResponse.json();
-            console.log("GitHub User fetched:", githubUser.login);
+            console.log("GitHub User fetched:", githubUser.login, "Avatar:", githubUser.avatar_url);
         } catch (fetchError: any) {
              throw new Error(`Failed to fetch GitHub user: ${fetchError.message}`);
         }
@@ -72,11 +72,12 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 				throw new Error("This GitHub account is already linked to another user account.");
 			}
 			
-			// Update current user with GitHub ID
+			// Update current user with GitHub ID and provider info
 			await db.update(users)
 				.set({ 
 					githubId: githubUser.id,
-					username: githubUser.login, // Update username if linking
+					githubUsername: githubUser.login,
+					githubAvatar: githubUser.avatar_url,
 				})
 				.where(eq(users.id, currentUserId));
 			
@@ -92,7 +93,9 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 			await db.insert(users).values({
 				id: userId,
 				githubId: githubUser.id,
-				username: githubUser.login
+				username: githubUser.login,
+				githubUsername: githubUser.login,
+				githubAvatar: githubUser.avatar_url,
 			});
 			console.log("Created new user with GitHub:", userId);
 		}
@@ -177,4 +180,5 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 interface GitHubUser {
 	id: number;
 	login: string;
+    avatar_url: string;
 }

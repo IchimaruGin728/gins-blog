@@ -64,12 +64,12 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 				throw new Error("This Discord account is already linked to another user account.");
 			}
 			
-			// Update current user with Discord ID
+			// Update current user with Discord ID and provider info
 			await db.update(users)
 				.set({ 
 					discordId: discordUser.id,
-					username: discordUser.username,
-					avatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
+					discordUsername: discordUser.username,
+					discordAvatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
 				})
 				.where(eq(users.id, currentUserId));
 			
@@ -87,6 +87,8 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 				discordId: discordUser.id,
 				username: discordUser.username,
 				avatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
+				discordUsername: discordUser.username,
+				discordAvatar: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
 			});
 			console.log("Created new user with Discord:", userId);
 		}
