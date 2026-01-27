@@ -101,4 +101,19 @@ const structuredData = {
       </a>
     </div>
   </article>
+
+  <!-- JSON-LD Structured Data -->
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(structuredData)}
+  />
+
+  <!-- Comments Section -->
+  <div class="max-w-3xl mx-auto mt-16">
+    <Comments
+      client:visible
+      postId={result.id}
+      currentUser={Astro.locals.user || undefined}
+    />
+  </div>
 </Layout>
