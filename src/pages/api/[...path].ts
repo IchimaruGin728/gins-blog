@@ -63,6 +63,25 @@ const route = app.post(
             publishedAt: timestamp
         }
     });
+
+    // CACHE UPDATE: Write-through to KV Layer (Immediate consistency)
+    try {
+        const CACHE_KEY = `post:${slug}`;
+         const postData = {
+            id,
+            title,
+            slug,
+            content,
+            createdAt: Date.now(),
+            updatedAt: updateTimestamp,
+            publishedAt: timestamp
+        };
+        await env.GINS_CACHE.put(CACHE_KEY, JSON.stringify(postData), {
+            expirationTtl: 60 * 60 * 24 * 7 // 7 Days Cache
+         });
+    } catch (e) {
+        console.error("KV Cache Update failed", e);
+    }
     
     try {
         const textToEmbed = `${title}\n${content.slice(0, 1000)}`;

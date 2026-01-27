@@ -14,12 +14,41 @@ if (!slug) {
 }
 
 const { env } = Astro.locals.runtime;
-const db = getDb(env);
-const result = await db
-  .select()
-  .from(posts)
-  .where(and(eq(posts.slug, slug), lte(posts.publishedAt, Date.now())))
-  .get();
+// CACHE LIFT: Check KV Layer first (Speed optimization)
+const CACHE_KEY = `post:${slug}`;
+let result = null;
+let isCached = false;
+
+try {
+  const cached = await env.GINS_CACHE.get(CACHE_KEY, "json");
+  if (cached) {
+    result = cached as typeof posts.$inferSelect;
+    isCached = true;
+  }
+} catch (e) {
+  console.warn("KV Cache Miss/Error:", e);
+}
+
+// Fallback to D1 if not in Cache
+if (!result) {
+  const db = getDb(env);
+  result = await db
+    .select()
+    .from(posts)
+    .where(and(eq(posts.slug, slug), lte(posts.publishedAt, Date.now())))
+    .get();
+
+  // Hydrate Cache if found (Background non-blocking)
+  if (result) {
+    try {
+      await env.GINS_CACHE.put(CACHE_KEY, JSON.stringify(result), {
+        expirationTtl: 60 * 60 * 24 * 7, // 7 Days Cache
+      });
+    } catch (e) {
+      console.warn("Failed to write to KV:", e);
+    }
+  }
+}
 
 if (!result) {
   return Astro.redirect("/404");

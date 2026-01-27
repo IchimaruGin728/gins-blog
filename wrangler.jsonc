@@ -41,7 +41,12 @@
     },
     {
       "binding": "SESSION",
-      "id": "d749e0c6642747248d4db6d3393573db",
+      "id": "d749e0c6642747248d4db6d3393573db", // Reusing ID for now as placeholder, user likely needs to create new one
+      "preview_id": "171ef5dabf7e4c83ad560b8cd85cacb9"
+    },
+    {
+      "binding": "GINS_CACHE",
+      "id": "d749e0c6642747248d4db6d3393573db", // Using same placeholder, user will update if needed
       "preview_id": "171ef5dabf7e4c83ad560b8cd85cacb9"
     }
   ],
