@@ -7,6 +7,12 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "routes": [
+    {
+      "pattern": "blog.ichimarugin728.com",
+      "custom_domain": true
+    }
+  ],
   "observability": {
     "enabled": true
   },
