@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import MobileNav from "../components/MobileNav.astro";
@@ -47,6 +48,7 @@ const fullTitle =
 <!doctype html>
 <html lang="en-SG" class="dark">
   <head>
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta
       name="viewport"

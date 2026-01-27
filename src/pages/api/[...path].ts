@@ -4,6 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import { getDb } from '../../lib/db';
 import { posts, music } from '../../../db/schema';
 import * as schema from '../../../db/schema';
+import { eq, desc } from 'drizzle-orm';
 import type { APIRoute } from 'astro';
 
 // Initialize Hono
@@ -113,7 +114,7 @@ const getPostRoute = app.get('/posts/:slug', async (c) => {
     const db = getDb(c.env);
     const slug = c.req.param('slug');
     // @ts-ignore
-    const post = await db.select().from(posts).where(schema.eq(posts.slug, slug)).get();
+    const post = await db.select().from(posts).where(eq(posts.slug, slug)).get();
     
     if (!post) return c.json({ error: 'Post not found' }, 404);
     return c.json(post);
@@ -133,11 +134,54 @@ const listPostsRoute = app.get('/posts', async (c) => {
     })
     .from(posts)
     // @ts-ignore
-    .orderBy(schema.desc(posts.publishedAt))
+    .orderBy(desc(posts.publishedAt))
     .limit(20)
     .all();
-    
     return c.json(allPosts);
+});
+
+// Toggle Post Status (Hide/Publish)
+const togglePostStatusRoute = app.patch('/posts/:slug/status', zValidator('json', z.object({
+    action: z.enum(['publish', 'unpublish'])
+})), async (c) => {
+    // @ts-ignore
+    const db = getDb(c.env);
+    const slug = c.req.param('slug');
+    const { action } = c.req.valid('json');
+
+    try {
+        await db.update(posts)
+            .set({ publishedAt: action === 'publish' ? Date.now() : null })
+            .where(eq(posts.slug, slug));
+        
+        // Invalidate Cache
+        const env = c.env as Env;
+        await env.GINS_CACHE.delete(`post:${slug}`);
+
+        return c.json({ success: true, status: action });
+    } catch (e) {
+        return c.json({ error: 'Failed to update status' }, 500);
+    }
+});
+
+// Delete Post
+const deletePostRoute = app.delete('/posts/:slug', async (c) => {
+    // @ts-ignore
+    const db = getDb(c.env);
+    const slug = c.req.param('slug');
+
+    try {
+        await db.delete(posts).where(eq(posts.slug, slug));
+        
+        // Invalidate Cache and Vector Index
+        const env = c.env as Env;
+        await env.GINS_CACHE.delete(`post:${slug}`);
+        // TODO: ideally remove from vector index too if ID is known, but simplistic for now
+        
+        return c.json({ success: true });
+    } catch (e) {
+        return c.json({ error: 'Failed to delete post' }, 500);
+    }
 });
   
 app.post('/music', zValidator('form', z.object({

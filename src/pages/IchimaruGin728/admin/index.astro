@@ -172,12 +172,36 @@ const recentPosts = await safeFetch(
                       post.publishedAt || post.createdAt,
                     ).toLocaleDateString()}
                   </td>
-                  <td class="py-4 text-right">
+                  <td class="py-4 text-right flex items-center justify-end gap-2">
                     <button
                       class="edit-post-btn px-3 py-1 rounded-lg bg-white/5 hover:bg-brand-primary/20 text-gray-300 hover:text-brand-accent border border-white/10 hover:border-brand-primary/50 transition-all text-xs"
                       data-slug={post.slug}
+                      title="Edit Post"
                     >
-                      Edit Signal
+                      <span class="i-heroicons-pencil-square w-4 h-4" />
+                    </button>
+                    <button
+                      class="toggle-status-btn px-3 py-1 rounded-lg bg-white/5 hover:bg-yellow-500/20 text-gray-300 hover:text-yellow-400 border border-white/10 hover:border-yellow-500/50 transition-all text-xs"
+                      data-slug={post.slug}
+                      data-status={isPublished ? "published" : "draft"}
+                      title={
+                        isPublished ? "Unpublish (Hide)" : "Publish (Show)"
+                      }
+                    >
+                      <span
+                        class={
+                          isPublished
+                            ? "i-heroicons-eye-slash w-4 h-4"
+                            : "i-heroicons-eye w-4 h-4"
+                        }
+                      />
+                    </button>
+                    <button
+                      class="delete-post-btn px-3 py-1 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-300 hover:text-red-400 border border-white/10 hover:border-red-500/50 transition-all text-xs"
+                      data-slug={post.slug}
+                      title="Delete Post"
+                    >
+                      <span class="i-heroicons-trash w-4 h-4" />
                     </button>
                   </td>
                 </tr>
@@ -328,15 +352,67 @@ const recentPosts = await safeFetch(
   const form = document.getElementById("create-post-form") as HTMLFormElement;
 
   // Bind Edit Buttons (Recent List)
-  document.querySelectorAll(".edit-post-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const slug = (e.currentTarget as HTMLElement).dataset.slug;
-      if (slug) {
-        console.log("Editing from list:", slug);
-        loadPostForEdit(slug);
-      }
+  // Bind Edit Buttons (Recent List)
+  const bindActionButtons = () => {
+    document.querySelectorAll(".edit-post-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const slug = (e.currentTarget as HTMLElement).dataset.slug;
+        if (slug) {
+          console.log("Editing from list:", slug);
+          loadPostForEdit(slug);
+        }
+      });
     });
-  });
+
+    document.querySelectorAll(".toggle-status-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const slug = target.dataset.slug;
+        const currentStatus = target.dataset.status;
+        const action = currentStatus === "published" ? "unpublish" : "publish";
+
+        if (!confirm(`Are you sure you want to ${action} this signal?`)) return;
+
+        try {
+          const res = await fetch(`/api/posts/${slug}/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+          });
+          if (res.ok) {
+            window.location.reload(); // Refresh to show status change
+          } else {
+            alert("Failed to update status");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    });
+
+    document.querySelectorAll(".delete-post-btn").forEach((btn) => {
+      btn.addEventListener("click", async (e) => {
+        const slug = (e.currentTarget as HTMLElement).dataset.slug;
+        if (
+          !confirm("WARNING: This will permanently delete the signal. Proceed?")
+        )
+          return;
+
+        try {
+          const res = await fetch(`/api/posts/${slug}`, { method: "DELETE" });
+          if (res.ok) {
+            window.location.reload();
+          } else {
+            alert("Failed to delete signal");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    });
+  };
+
+  bindActionButtons();
 
   // Ensure fresh state on navigation (fix BFCache)
   window.addEventListener("pageshow", () => {
