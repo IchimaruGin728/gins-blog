@@ -19,13 +19,23 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
 	}
 
 	try {
+        console.log("Validating GitHub code...");
 		const tokens: OAuth2Tokens = await getGithub(locals.runtime.env).validateAuthorizationCode(code);
-		const githubUserResponse = await fetch('https://api.github.com/user', {
-			headers: {
-				Authorization: `Bearer ${tokens.accessToken}`
-			}
-		});
-		const githubUser: GitHubUser = await githubUserResponse.json();
+        console.log("Tokens received:", tokens.accessToken ? "Present" : "Missing");
+
+        let githubUser: GitHubUser;
+        try {
+            console.log("Fetching GitHub user...");
+            const githubUserResponse = await fetch('https://api.github.com/user', {
+                headers: {
+                    Authorization: `Bearer ${tokens.accessToken}`
+                }
+            });
+            githubUser = await githubUserResponse.json();
+            console.log("GitHub User fetched:", githubUser.login);
+        } catch (fetchError: any) {
+             throw new Error(`Failed to fetch GitHub user: ${fetchError.message}`);
+        }
 
 		const db = getDb(locals.runtime.env);
 
@@ -45,9 +55,11 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
             });
 		}
 
+		console.log("Creating session, userId:", userId);
 		const token = generateSessionToken();
 		const session = await createSession(token, userId, db, locals.runtime.env);
         
+        console.log("Setting session cookie...");
 		cookies.set('session', token, {
 			path: '/',
 			httpOnly: true,
