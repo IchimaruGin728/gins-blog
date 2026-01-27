@@ -5,6 +5,7 @@ import { posts } from "../../../db/schema";
 import { eq, and, lte } from "drizzle-orm";
 import Comments from "../../components/Comments";
 import { marked } from "marked";
+import ShareButtons from "../../components/ShareButtons.astro";
 
 const { slug } = Astro.params;
 
@@ -111,6 +112,15 @@ const structuredData = {
     type="application/ld+json"
     set:html={JSON.stringify(structuredData)}
   />
+
+  <!-- Share Buttons -->
+  <div class="max-w-3xl mx-auto mt-8">
+    <ShareButtons
+      url={Astro.url.href}
+      title={result.title}
+      description={result.content.substring(0, 160)}
+    />
+  </div>
 
   <!-- Comments Section -->
   <div class="max-w-3xl mx-auto mt-16">

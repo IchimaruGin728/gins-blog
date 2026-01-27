@@ -20,6 +20,7 @@ const route = app.post(
       content: z.string().min(1),
       slug: z.string().min(1),
       publishedAt: z.string().optional(), // Receive as string from datetime-local
+      updatedAt: z.string().optional(), // Receive as string from datetime-local
     })
   ),
   async (c) => {
@@ -27,7 +28,7 @@ const route = app.post(
     const userId = c.req.header('X-User-Id');
     if (!userId) return c.json({ error: 'Unauthorized' }, 401);
 
-    const { id: existingId, title, content, slug, publishedAt } = c.req.valid('form');
+    const { id: existingId, title, content, slug, publishedAt, updatedAt } = c.req.valid('form');
     const env = c.env as Env;
     
     // @ts-ignore
@@ -36,6 +37,7 @@ const route = app.post(
     // Use existing ID if provided (Edit Mode), or generate new
     const id = existingId || crypto.randomUUID();
     const timestamp = publishedAt ? new Date(publishedAt).getTime() : Date.now();
+    const updateTimestamp = updatedAt ? new Date(updatedAt).getTime() : Date.now();
 
     // Upsert (Insert or Replce)
     // SQLite Drizzle: .onConflictDoUpdate
@@ -49,7 +51,7 @@ const route = app.post(
         slug,
         content,
         createdAt: Date.now(), // Only valid for insert, but ignored on update if we don't set it
-        updatedAt: Date.now(),
+        updatedAt: updateTimestamp,
         publishedAt: timestamp
     }).onConflictDoUpdate({
         target: posts.id,
@@ -57,7 +59,7 @@ const route = app.post(
             title,
             slug,
             content,
-            updatedAt: Date.now(),
+            updatedAt: updateTimestamp,
             publishedAt: timestamp
         }
     });

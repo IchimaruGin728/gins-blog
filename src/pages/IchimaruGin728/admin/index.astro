@@ -153,64 +153,94 @@ Astro.response.headers.set("Expires", "0");
               class="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-accent transition-colors text-white calendar-picker-indicator:invert"
             />
             <p class="text-xs text-gray-500 mt-1">
-              Leave empty for immediate publish, or set a future date to
-              schedule
+              Set a past or future date to override publication time
             </p>
           </div>
         </div>
 
-        <!-- Markdown Editor with Toolbar -->
-        <div
-          class="border border-white/10 rounded-xl overflow-hidden bg-black/20"
-        >
-          <div
-            class="flex items-center gap-2 p-2 border-b border-white/10 bg-white/5"
-          >
-            <button
-              type="button"
-              class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
-              title="Bold">B</button
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm text-gray-400 mb-2 font-mono"
+              >UPDATED_AT</label
             >
-            <button
-              type="button"
-              class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
-              title="Italic">I</button
-            >
-            <div class="w-px h-6 bg-white/10 mx-2"></div>
-            <button
-              type="button"
-              id="upload-btn"
-              class="flex items-center gap-2 px-3 py-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors text-sm"
-            >
-              <span class="i-heroicons-photo"></span>
-              Upload Media
-            </button>
-            <input
-              type="file"
-              id="file-input"
-              class="hidden"
-              accept="image/*, .gif, .ppt, .pptx, .doc, .docx, .xls, .xlsx, .csv"
-            />
+            <div class="flex items-center gap-4">
+              <input
+                type="datetime-local"
+                name="updatedAt"
+                id="updated-at-input"
+                class="flex-grow bg-black/40 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-brand-accent transition-colors text-white disabled:opacity-50"
+                disabled
+              />
+              <label class="flex items-center gap-2 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  id="auto-update-toggle"
+                  checked
+                  class="w-5 h-5 rounded border-white/20 bg-white/5 text-brand-accent focus:ring-brand-accent focus:ring-offset-0 transition-all"
+                />
+                <span
+                  class="text-xs text-gray-400 group-hover:text-gray-200 transition-colors"
+                  >Auto-Update</span
+                >
+              </label>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              Manually override modification time or keep it automatic
+            </p>
           </div>
-          <textarea
-            id="content-area"
-            name="content"
-            rows="15"
-            required
-            class="w-full bg-transparent p-4 focus:outline-none font-mono text-sm leading-relaxed resize-y"
-            placeholder="Initiate transmission..."></textarea>
-        </div>
-
-        <button
-          type="submit"
-          class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent hover:opacity-90 text-white font-bold tracking-wider transition-opacity"
-        >
-          BROADCAST SIGNAL
-        </button>
-
-        <div id="status" class="hidden p-4 rounded-xl text-center text-sm">
         </div>
       </form>
+
+      <!-- Markdown Editor with Toolbar -->
+      <div
+        class="border border-white/10 rounded-xl overflow-hidden bg-black/20"
+      >
+        <div
+          class="flex items-center gap-2 p-2 border-b border-white/10 bg-white/5"
+        >
+          <button
+            type="button"
+            class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+            title="Bold">B</button
+          >
+          <button
+            type="button"
+            class="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+            title="Italic">I</button
+          >
+          <div class="w-px h-6 bg-white/10 mx-2"></div>
+          <button
+            type="button"
+            id="upload-btn"
+            class="flex items-center gap-2 px-3 py-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors text-sm"
+          >
+            <span class="i-heroicons-photo"></span>
+            Upload Media
+          </button>
+          <input
+            type="file"
+            id="file-input"
+            class="hidden"
+            accept="image/*, .gif, .ppt, .pptx, .doc, .docx, .xls, .xlsx, .csv"
+          />
+        </div>
+        <textarea
+          id="content-area"
+          name="content"
+          rows="15"
+          required
+          class="w-full bg-transparent p-4 focus:outline-none font-mono text-sm leading-relaxed resize-y"
+          placeholder="Initiate transmission..."></textarea>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent hover:opacity-90 text-white font-bold tracking-wider transition-opacity"
+      >
+        BROADCAST SIGNAL
+      </button>
+
+      <div id="status" class="hidden p-4 rounded-xl text-center text-sm"></div>
     </div>
   </div>
 </Layout>
@@ -233,6 +263,27 @@ Astro.response.headers.set("Expires", "0");
   const status = document.getElementById("status");
   const fileInput = document.getElementById("file-input") as HTMLInputElement;
   const uploadBtn = document.getElementById("upload-btn");
+  const autoUpdateToggle = document.getElementById(
+    "auto-update-toggle",
+  ) as HTMLInputElement;
+  const updatedAtInput = document.getElementById(
+    "updated-at-input",
+  ) as HTMLInputElement;
+
+  autoUpdateToggle?.addEventListener("change", () => {
+    updatedAtInput.disabled = autoUpdateToggle.checked;
+    if (autoUpdateToggle.checked) {
+      updatedAtInput.value = "";
+    } else {
+      // Set current time as default when unlocking
+      const now = new Date();
+      updatedAtInput.value = new Date(
+        now.getTime() - now.getTimezoneOffset() * 60000,
+      )
+        .toISOString()
+        .slice(0, 16);
+    }
+  });
   // @ts-ignore
   const textarea = document.getElementById(
     "content-area",
@@ -295,6 +346,7 @@ Astro.response.headers.set("Expires", "0");
           slug: formData.get("slug") as string,
           content: formData.get("content") as string,
           publishedAt: formData.get("publishedAt") as string,
+          updatedAt: formData.get("updatedAt") as string,
         },
       });
 
@@ -388,9 +440,7 @@ Astro.response.headers.set("Expires", "0");
           ).value = post.content;
 
           if (post.publishedAt) {
-            // Convert timestamp to YYYY-MM-DDTHH:mm
             const date = new Date(post.publishedAt);
-            // Adjust to local ISO string (simple slice for now)
             const iso = new Date(
               date.getTime() - date.getTimezoneOffset() * 60000,
             )
@@ -399,6 +449,22 @@ Astro.response.headers.set("Expires", "0");
             (
               document.getElementById("published-at-input") as HTMLInputElement
             ).value = iso;
+          }
+
+          if (post.updatedAt) {
+            const date = new Date(post.updatedAt);
+            const iso = new Date(
+              date.getTime() - date.getTimezoneOffset() * 60000,
+            )
+              .toISOString()
+              .slice(0, 16);
+            updatedAtInput.value = iso;
+            autoUpdateToggle.checked = false;
+            updatedAtInput.disabled = false;
+          } else {
+            updatedAtInput.value = "";
+            autoUpdateToggle.checked = true;
+            updatedAtInput.disabled = true;
           }
 
           // Scroll to editor
