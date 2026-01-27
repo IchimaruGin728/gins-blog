@@ -93,7 +93,20 @@ export default function SearchModal() {
             ></div>
 
             {/* Modal */}
-            <div className="relative w-full max-w-2xl bg-[#09090b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-2xl bg-[#09090b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ease-out animate-[slideUp_0.3s_ease-out]">
+                
+                <style>{`
+                    @keyframes slideUp {
+                        from {
+                            opacity: 0;
+                            transform: translateY(20px) scale(0.95);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateY(0) scale(1);
+                        }
+                    }
+                `}</style>
                 
                 {/* Search Bar */}
                 <div className="flex items-center px-4 py-3 border-b border-white/10">

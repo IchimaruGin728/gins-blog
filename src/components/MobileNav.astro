@@ -13,16 +13,16 @@ const isActive = (path: string) => {
 <!-- Mobile Bottom Navigation (Only visible on mobile) -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
   <div
-    class="mx-4 mb-4 glass-panel rounded-3xl px-6 py-3 border border-white/10 backdrop-blur-xl shadow-2xl"
+    class="mx-4 mb-4 glass-panel rounded-2xl px-6 py-3 border border-white/10 backdrop-blur-xl shadow-2xl"
   >
     <div class="flex justify-around items-center">
       <!-- Home -->
       <a
         href="/"
-        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 ${
+        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-500 ease-out ${
           isActive("/")
             ? "bg-brand-accent/20 scale-110"
-            : "hover:bg-white/5 active:scale-95"
+            : "hover:bg-white/5 active:scale-90 active:bg-white/10"
         }`}
       >
         <svg
@@ -61,10 +61,10 @@ const isActive = (path: string) => {
       <!-- Blog -->
       <a
         href="/blog"
-        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 ${
+        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-500 ease-out ${
           isActive("/blog")
             ? "bg-brand-accent/20 scale-110"
-            : "hover:bg-white/5 active:scale-95"
+            : "hover:bg-white/5 active:scale-90 active:bg-white/10"
         }`}
       >
         <svg
@@ -103,7 +103,7 @@ const isActive = (path: string) => {
       <!-- Search -->
       <button
         id="mobile-search-btn"
-        class="group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 hover:bg-white/5 active:scale-95"
+        class="group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-500 ease-out hover:bg-white/5 active:scale-90 active:bg-white/10"
       >
         <svg
           class="w-6 h-6 text-gray-400 group-hover:text-white group-hover:scale-105 transition-all duration-300"
@@ -127,10 +127,10 @@ const isActive = (path: string) => {
       <!-- About -->
       <a
         href="/about"
-        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 ${
+        class={`group relative flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-500 ease-out ${
           isActive("/about")
             ? "bg-brand-accent/20 scale-110"
-            : "hover:bg-white/5 active:scale-95"
+            : "hover:bg-white/5 active:scale-90 active:bg-white/10"
         }`}
       >
         <svg
