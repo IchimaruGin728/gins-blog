@@ -342,6 +342,7 @@ const recentPosts = await safeFetch(
       <textarea
         id="content-area"
         name="content"
+        form="create-post-form"
         rows="15"
         required
         class="w-full bg-transparent p-4 focus:outline-none font-mono text-sm leading-relaxed resize-y"
@@ -351,6 +352,7 @@ const recentPosts = await safeFetch(
     <div class="flex items-center gap-4">
       <button
         type="submit"
+        form="create-post-form"
         class="relative z-10 flex-1 py-4 rounded-xl bg-gradient-to-r from-brand-primary to-brand-accent hover:opacity-90 hover:scale-[1.01] active:scale-[0.98] text-white font-bold tracking-wider transition-all cursor-pointer shadow-lg hover:shadow-brand-accent/25"
       >
         BROADCAST SIGNAL
@@ -442,16 +444,12 @@ const recentPosts = await safeFetch(
   const client = hc<AppType>(window.location.origin);
   const form = document.getElementById("create-post-form") as HTMLFormElement;
 
-  console.log("💎 Admin Module Loaded");
-
-  // Bind Edit Buttons (Recent List)
   // Bind Edit Buttons (Recent List)
   const bindActionButtons = () => {
     document.querySelectorAll(".edit-post-btn").forEach((btn) => {
       btn.addEventListener("click", (e) => {
         const slug = (e.currentTarget as HTMLElement).dataset.slug;
         if (slug) {
-          console.log("Editing from list:", slug);
           loadPostForEdit(slug);
         }
       });
@@ -590,7 +588,6 @@ const recentPosts = await safeFetch(
   // Post Submission
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log("🚀 Initiating Broadcast Sequence...");
 
     const formData = new FormData(form);
     status!.className = "hidden p-4 rounded-xl text-center text-sm";
