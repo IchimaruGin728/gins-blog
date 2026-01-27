@@ -7,6 +7,8 @@ export const GET: APIRoute = async ({ cookies, redirect, locals }) => {
     const codeVerifier = generateCodeVerifier();
 	const url = getGoogle(locals.runtime.env).createAuthorizationURL(state, codeVerifier, ['profile', 'email']);
 
+    const redirectTo = new URL(request.url).searchParams.get('redirect_to') ?? '/';
+
 	cookies.set('google_oauth_state', state, {
 		path: '/',
 		secure: import.meta.env.PROD,
@@ -15,6 +17,13 @@ export const GET: APIRoute = async ({ cookies, redirect, locals }) => {
 		sameSite: 'lax'
 	});
     cookies.set('google_code_verifier', codeVerifier, {
+        path: '/',
+        secure: import.meta.env.PROD,
+        httpOnly: true,
+        maxAge: 60 * 10,
+        sameSite: 'lax'
+    });
+    cookies.set('login_redirect', redirectTo, {
         path: '/',
         secure: import.meta.env.PROD,
         httpOnly: true,
