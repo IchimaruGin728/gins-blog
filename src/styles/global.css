@@ -7,6 +7,22 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased; /* Safari font rendering */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* P3 Color Support */
+@media (color-gamut: p3) {
+  :root {
+    --brand-primary: color(display-p3 0.345 0.11 0.529); /* Deep Purple #581C87 */
+    --brand-accent: color(display-p3 0.753 0.518 0.988); /* Accent #C084FC */
+  }
+}
+
+/* Performance Optimizations */
+.optimize-visibility {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px; /* Estimate height to prevent scrollbar jumping */
 }
 
 /* Custom Scrollbar */

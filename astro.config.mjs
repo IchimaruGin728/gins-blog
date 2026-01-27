@@ -20,4 +20,5 @@ export default defineConfig({
   }), unocss({
     injectReset: true,
   }), sitemap()],
+  prefetch: true,
 });

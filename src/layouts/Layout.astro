@@ -52,7 +52,7 @@ const fullTitle =
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
     />
 
     <!-- Favicons & PWA -->
@@ -105,7 +105,10 @@ const fullTitle =
   </head>
   <body class="bg-[#050505] text-white min-h-screen font-sans flex flex-col">
     <!-- Background Elements -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+    <div
+      class="fixed inset-0 z-0 pointer-events-none overflow-hidden"
+      transition:persist
+    >
       <div
         class="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-brand-primary/10 rounded-full blur-[120px]"
       >
