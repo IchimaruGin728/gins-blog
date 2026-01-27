@@ -29,7 +29,9 @@ export const GET: APIRoute = async ({ request, cookies, locals, redirect }) => {
             console.log("Fetching GitHub user...");
             const githubUserResponse = await fetch('https://api.github.com/user', {
                 headers: {
-                    Authorization: `Bearer ${accessToken.trim()}`
+                    'Authorization': `Bearer ${accessToken.trim()}`,
+                    'User-Agent': 'Gins-Blog-OAuth-App',
+                    'Accept': 'application/vnd.github+json'
                 }
             });
             
