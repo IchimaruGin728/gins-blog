@@ -8,8 +8,16 @@ const env = Astro.locals.runtime.env;
 const postCount = await env.DB.prepare(
   "SELECT count(*) as count FROM posts",
 ).first<number>("count");
-const totalViews = "42.5K";
-const activeUsers = "128";
+
+const userCount = await env.DB.prepare(
+  "SELECT count(*) as count FROM users",
+).first<number>("count");
+
+const activeSessionCount = await env.DB.prepare(
+  "SELECT count(*) as count FROM sessions WHERE expires_at > ?",
+)
+  .bind(Date.now())
+  .first<number>("count");
 
 // Prevent Caching
 Astro.response.headers.set(
@@ -84,17 +92,17 @@ Astro.response.headers.set("Expires", "0");
         <div
           class="text-xs font-mono text-gray-400 uppercase tracking-widest mb-2"
         >
-          Community Users
+          Total Users
         </div>
-        <div class="text-4xl font-bold font-display">{activeUsers}</div>
+        <div class="text-4xl font-bold font-display">{userCount}</div>
       </div>
       <div class="glass-panel p-6 rounded-2xl">
         <div
           class="text-xs font-mono text-gray-400 uppercase tracking-widest mb-2"
         >
-          Views (KV)
+          Active Sessions
         </div>
-        <div class="text-4xl font-bold font-display">{totalViews}</div>
+        <div class="text-4xl font-bold font-display">{activeSessionCount}</div>
       </div>
       <div
         class="glass-panel p-6 rounded-2xl bg-gradient-to-br from-brand-primary/20 to-transparent border-brand-primary/30"
