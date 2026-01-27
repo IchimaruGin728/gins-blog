@@ -8,12 +8,13 @@ export const getGithub = (env: Env) => {
   // Actually, in Cloudflare SSR, 'env' is the source of truth for runtime secrets.
   const clientId = (env.GITHUB_CLIENT_ID ?? import.meta.env.GITHUB_CLIENT_ID)?.trim();
   const clientSecret = (env.GITHUB_CLIENT_SECRET ?? import.meta.env.GITHUB_CLIENT_SECRET)?.trim();
+  const redirectUri = (env.GITHUB_REDIRECT_URI ?? import.meta.env.GITHUB_REDIRECT_URI)?.trim() || null;
 
   if (!clientId || !clientSecret) {
     throw new Error('Missing GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET');
   }
 
-  return new GitHub(clientId, clientSecret, null);
+  return new GitHub(clientId, clientSecret, redirectUri);
 };
 
 export const getGoogle = (env: Env) => {
