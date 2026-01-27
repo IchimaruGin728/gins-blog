@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import MobileNav from "../components/MobileNav.astro";
 import SearchModal from "../components/SearchModal";
 import "../styles/global.css";
 
@@ -112,7 +113,9 @@ const fullTitle =
 
     <Header />
 
-    <main class="relative z-10 pt-32 px-6 max-w-7xl mx-auto w-full flex-grow">
+    <main
+      class="relative z-10 pt-32 px-6 max-w-7xl mx-auto w-full flex-grow pb-24 md:pb-0"
+    >
       <slot />
     </main>
 
