@@ -370,7 +370,7 @@ const recentPosts = await safeFetch(
   <!-- Success Modal Overlay -->
   <div
     id="success-modal"
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity duration-300"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 pointer-events-none"
   >
     <div class="relative w-full max-w-lg flex flex-col items-center">
       <!-- Glitch/Success Effect (Like 404) -->
@@ -626,7 +626,7 @@ const recentPosts = await safeFetch(
         verifyBtn.href = `/blog/${slug}`;
 
         // Show Modal with Animation
-        modal?.classList.remove("hidden");
+        modal?.classList.remove("hidden", "pointer-events-none");
         // Force Reflow
         void modal?.offsetWidth;
         modal?.classList.remove("opacity-0");
@@ -641,7 +641,7 @@ const recentPosts = await safeFetch(
 
         // Return Logic
         returnBtn?.addEventListener("click", () => {
-          modal?.classList.add("opacity-0");
+          modal?.classList.add("opacity-0", "pointer-events-none");
           modal?.querySelector(".glass-panel")?.classList.add("scale-95");
           setTimeout(() => modal?.classList.add("hidden"), 300);
           window.location.reload(); // Refresh list
