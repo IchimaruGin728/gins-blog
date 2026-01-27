@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Disallow admin areas
+User-agent: *
+Disallow: /IchimaruGin728/
+
+# Disallow API routes
+Disallow: /api/
+
+# Disallow login pages from indexing
+Disallow: /login
+Disallow: /profile
+
+# Sitemap location
+Sitemap: https://blog.ichimarugin728.com/sitemap.xml

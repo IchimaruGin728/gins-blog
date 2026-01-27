@@ -19,9 +19,50 @@ const result = await db.select().from(posts).where(eq(posts.slug, slug)).get();
 if (!result) {
   return Astro.redirect("/404");
 }
+// Extract description from content (first 160 chars)
+const contentPreview =
+  result.content
+    .replace(/<[^>]*>/g, "")
+    .slice(0, 160)
+    .trim() + "...";
+const publishedTime = new Date(
+  result.publishedAt || result.createdAt,
+).toISOString();
+
+// JSON-LD Structured Data
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: result.title,
+  description: contentPreview,
+  author: {
+    "@type": "Person",
+    name: "IchimaruGin728",
+    url: "https://blog.ichimarugin728.com/about",
+  },
+  datePublished: publishedTime,
+  dateModified: new Date(result.updatedAt).toISOString(),
+  publisher: {
+    "@type": "Organization",
+    name: "Gin's Blog",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://blog.ichimarugin728.com/favicon.png",
+    },
+  },
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `https://blog.ichimarugin728.com/blog/${slug}`,
+  },
+};
 ---
 
-<Layout title={`${result.title} - Gin's Blog`}>
+<Layout
+  title={result.title}
+  description={contentPreview}
+  type="article"
+  publishedTime={publishedTime}
+>
   <article class="max-w-3xl mx-auto">
     <header class="mb-12 text-center">
       <div
